@@ -1,9 +1,11 @@
 import http from 'http';
 
 import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
+import { OrionAPIClient } from './solarwinds/client';
 
 import { IntegrationConfig } from './config';
 import { AcmeUser, AcmeGroup } from './types';
+import { Device } from './solarwinds/types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -16,7 +18,14 @@ export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
  * resources.
  */
 export class APIClient {
-  constructor(readonly config: IntegrationConfig) {}
+  constructor(readonly config: IntegrationConfig) {
+    this.client = new OrionAPIClient({
+      username: this.config.username,
+      password: this.config.password,
+    });
+  }
+
+  client: OrionAPIClient;
 
   public async verifyAuthentication(): Promise<void> {
     // TODO make the most light-weight request possible to validate
@@ -54,67 +63,16 @@ export class APIClient {
   }
 
   /**
-   * Iterates each user resource in the provider.
+   * Iterates each device resource in the provider.
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
-  public async iterateUsers(
-    iteratee: ResourceIteratee<AcmeUser>,
+  public async iterateDevices(
+    iteratee: ResourceIteratee<Device>,
   ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
-
-    const users: AcmeUser[] = [
-      {
-        id: 'acme-user-1',
-        name: 'User One',
-      },
-      {
-        id: 'acme-user-2',
-        name: 'User Two',
-      },
-    ];
-
-    for (const user of users) {
-      await iteratee(user);
-    }
-  }
-
-  /**
-   * Iterates each group resource in the provider.
-   *
-   * @param iteratee receives each resource to produce entities/relationships
-   */
-  public async iterateGroups(
-    iteratee: ResourceIteratee<AcmeGroup>,
-  ): Promise<void> {
-    // TODO paginate an endpoint, invoke the iteratee with each record in the
-    // page
-    //
-    // The provider API will hopefully support pagination. Functions like this
-    // should maintain pagination state, and for each page, for each record in
-    // the page, invoke the `ResourceIteratee`. This will encourage a pattern
-    // where each resource is processed and dropped from memory.
-
-    const groups: AcmeGroup[] = [
-      {
-        id: 'acme-group-1',
-        name: 'Group One',
-        users: [
-          {
-            id: 'acme-user-1',
-          },
-        ],
-      },
-    ];
-
-    for (const group of groups) {
-      await iteratee(group);
+    const devices = await this.client.fetchDevices();
+    for (const device of devices) {
+      await iteratee(device);
     }
   }
 }
