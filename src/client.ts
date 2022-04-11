@@ -1,6 +1,4 @@
-import http from 'http';
-
-import { IntegrationProviderAuthenticationError } from '@jupiterone/integration-sdk-core';
+import { IntegrationProviderAuthenticationError, IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { OrionAPIClient } from './solarwinds/client';
 
 import { IntegrationConfig } from './config';
@@ -22,6 +20,7 @@ export class APIClient {
     this.client = new OrionAPIClient({
       username: this.config.username,
       password: this.config.password,
+      url: this.config.url,
     });
   }
 
@@ -31,35 +30,14 @@ export class APIClient {
     // TODO make the most light-weight request possible to validate
     // authentication works with the provided credentials, throw an err if
     // authentication fails
-    const request = new Promise<void>((resolve, reject) => {
-      http.get(
-        {
-          hostname: 'localhost',
-          port: 443,
-          path: '/api/v1/some/endpoint?limit=1',
-          agent: false,
-          timeout: 10,
-        },
-        (res) => {
-          if (res.statusCode !== 200) {
-            reject(new Error('Provider authentication failed'));
-          } else {
-            resolve();
-          }
-        },
-      );
-    });
-
     try {
-      await request;
+      this.client.verifyAuthentication();
     } catch (err) {
-      throw new IntegrationProviderAuthenticationError({
-        cause: err,
-        endpoint: 'https://localhost/api/v1/some/endpoint?limit=1',
-        status: err.status,
-        statusText: err.statusText,
-      });
+      throw new IntegrationValidationError(
+        `Failed to authenticate with the solarwinds API: ${err.message}`,
+      );
     }
+
   }
 
   /**

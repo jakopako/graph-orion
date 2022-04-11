@@ -28,6 +28,9 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
     type: 'string',
     mask: true,
   },
+  url: {
+    type: 'string',
+  }
 };
 
 /**
@@ -36,14 +39,19 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
  */
 export interface IntegrationConfig extends IntegrationInstanceConfig {
   /**
-   * The provider API client ID used to authenticate requests.
+   * The provider API username used to authenticate requests.
    */
   username: string;
 
   /**
-   * The provider API client secret used to authenticate requests.
+   * The provider API password used to authenticate requests.
    */
   password: string;
+
+  /**
+   * The provider API url.
+   */
+  url: string;
 }
 
 export async function validateInvocation(
@@ -53,7 +61,7 @@ export async function validateInvocation(
 
   if (!config.clientId || !config.clientSecret) {
     throw new IntegrationValidationError(
-      'Config requires all of {username, password}',
+      'Config requires all of {username, password, url}',
     );
   }
 
