@@ -1,9 +1,8 @@
-import { IntegrationProviderAuthenticationError, IntegrationValidationError } from '@jupiterone/integration-sdk-core';
+import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { OrionAPIClient } from './solarwinds/client';
 
 import { IntegrationConfig } from './config';
-import { AcmeUser, AcmeGroup } from './types';
-import { Device } from './solarwinds/types';
+import { SolarwindsHostAgent, NetworkInterface } from './solarwinds/types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -21,6 +20,7 @@ export class APIClient {
       username: this.config.username,
       password: this.config.password,
       url: this.config.url,
+      verifyCert: this.config.verifyCert,
     });
   }
 
@@ -37,7 +37,6 @@ export class APIClient {
         `Failed to authenticate with the solarwinds API: ${err.message}`,
       );
     }
-
   }
 
   /**
@@ -46,11 +45,26 @@ export class APIClient {
    * @param iteratee receives each resource to produce entities/relationships
    */
   public async iterateDevices(
-    iteratee: ResourceIteratee<Device>,
+    iteratee: ResourceIteratee<SolarwindsHostAgent>,
   ): Promise<void> {
     const devices = await this.client.fetchDevices();
     for (const device of devices) {
       await iteratee(device);
+    }
+  }
+
+  /**
+   * Iterates each network interface resource in the provider.
+   *
+   * @param iteratee receives each resource to produce entities/relationships
+   */
+  public async iterateNetworkInterfaces(
+    iteratee: ResourceIteratee<NetworkInterface>,
+  ): Promise<void> {
+    const interfaces = await this.client.fetchNetworkInterfaces();
+    // console.log(interfaces)
+    for (const nInterface of interfaces) {
+      await iteratee(nInterface);
     }
   }
 }

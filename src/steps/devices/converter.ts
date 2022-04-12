@@ -1,0 +1,36 @@
+import {
+  convertProperties,
+  createIntegrationEntity,
+  Entity,
+} from '@jupiterone/integration-sdk-core';
+import { SolarwindsHostAgent } from '../../solarwinds/types';
+import { Entities } from '../constants';
+import crypto from 'crypto';
+
+export function createHostAgentEntityIdentifier(
+  swa: SolarwindsHostAgent,
+): string {
+  const id = `${swa.hostname}:${crypto
+    .createHash('md5')
+    .update(swa.hostname)
+    .digest('hex')}`;
+  return id;
+}
+
+export function createHostAgentEntity(swa: SolarwindsHostAgent): Entity {
+  const name = swa.hostname;
+  return createIntegrationEntity({
+    entityData: {
+      source: swa,
+      assign: {
+        ...convertProperties(swa),
+        _key: createHostAgentEntityIdentifier(swa),
+        _type: Entities.HOST_AGENT._type,
+        _class: Entities.HOST_AGENT._class,
+        name,
+        displayName: name,
+        function: ['activity-monitor'],
+      },
+    },
+  });
+}

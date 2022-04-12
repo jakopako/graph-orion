@@ -30,7 +30,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   },
   url: {
     type: 'string',
-  }
+  },
+  verifyCert: {
+    type: 'boolean',
+  },
 };
 
 /**
@@ -38,20 +41,10 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
  * same properties defined by `instanceConfigFields`.
  */
 export interface IntegrationConfig extends IntegrationInstanceConfig {
-  /**
-   * The provider API username used to authenticate requests.
-   */
   username: string;
-
-  /**
-   * The provider API password used to authenticate requests.
-   */
   password: string;
-
-  /**
-   * The provider API url.
-   */
   url: string;
+  verifyCert: boolean;
 }
 
 export async function validateInvocation(
@@ -59,7 +52,7 @@ export async function validateInvocation(
 ) {
   const { config } = context.instance;
 
-  if (!config.clientId || !config.clientSecret) {
+  if (!config.username || !config.password || !config.url) {
     throw new IntegrationValidationError(
       'Config requires all of {username, password, url}',
     );

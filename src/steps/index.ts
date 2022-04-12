@@ -1,6 +1,6 @@
-import { accountSteps } from './account';
-import { accessSteps } from './access';
+import { networkInterfacesSteps } from './network-interfaces';
+import { devicesSteps } from './devices';
 
-const integrationSteps = [...accountSteps, ...accessSteps];
+const integrationSteps = [...devicesSteps, ...networkInterfacesSteps];
 
 export { integrationSteps };
