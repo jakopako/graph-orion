@@ -1,11 +1,14 @@
 import {
+  createDirectRelationship,
   IntegrationStep,
   IntegrationStepExecutionContext,
+  RelationshipClass,
 } from '@jupiterone/integration-sdk-core';
 import { createAPIClient } from '../../client';
 
 import { IntegrationConfig } from '../../config';
-import { Steps, Entities } from '../constants';
+import { Steps, Entities, Relationships } from '../constants';
+import { createHostAgentEntityIdentifier } from '../devices/converter';
 import { createNetworkInterfaceEntity } from './converter';
 
 export async function fetchNetworkInterfaces({
@@ -18,14 +21,28 @@ export async function fetchNetworkInterfaces({
     const NIEntity = await jobState.addEntity(
       createNetworkInterfaceEntity(nInterface),
     );
+
+    const hostAgentEntity = await jobState.findEntity(
+      createHostAgentEntityIdentifier(nInterface.hostname),
+    );
+    if (hostAgentEntity) {
+      await jobState.addRelationship(
+        createDirectRelationship({
+          _class: RelationshipClass.MONITORS,
+          from: hostAgentEntity,
+          to: NIEntity,
+        }),
+      );
+    }
   });
 }
+
 export const networkInterfacesSteps: IntegrationStep<IntegrationConfig>[] = [
   {
     id: Steps.NETWORK_INTERFACES,
     name: 'Fetch Network Interfaces',
     entities: [Entities.NETWORK_INTERFACE],
-    relationships: [],
+    relationships: [Relationships.HOST_AGENT_MONITORS_NETWORK_INTERFACE],
     dependsOn: [Steps.DEVICES],
     executionHandler: fetchNetworkInterfaces,
   },

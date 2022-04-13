@@ -38,13 +38,16 @@ export class OrionAPIClient {
     // http://solarwinds.github.io/OrionSDK/2020.2/schema/Orion.Nodes.html
     // http://solarwinds.github.io/OrionSDK/2020.2/schema/Orion.NodeIPAddresses.html
     // http://solarwinds.github.io/OrionSDK/2020.2/schema/Orion.NPM.Interfaces.html
+    //
+    // Another note: macAddress is stored like so: 6C8BD30FFB6B and not 6c:8b:d3:0f:fb:6b
+    // we can't change it here because the macAddress property of the NetworkInterface
+    // has format 'hostname', see https://github.com/JupiterOne/data-model/blob/main/src/schemas/NetworkInterface.json
     const uIDSet: Set<string> = new Set();
     const newList: NetworkInterface[] = [];
     for (const nInterface of nis) {
       if (nInterface.hostname != '' && nInterface.macAddress != '') {
         const uID = nInterface.hostname + nInterface.interfaceName;
         if (!uIDSet.has(uID)) {
-          // console.log(nInterface);
           uIDSet.add(uID);
           newList.push(nInterface);
         }
@@ -117,7 +120,7 @@ export class OrionAPIClient {
   public async fetchNetworkInterfaces(): Promise<NetworkInterface[]> {
     try {
       const query =
-        'SELECT n.SysName as hostname, n.Interfaces.Index as interfaceIndex, n.Interfaces.MAC as macAddress, n.Interfaces.Name as interfaceName, i.IPAddress as ipAddress, i.SubnetMask as subnetMask FROM Orion.Nodes n JOIN Orion.NodeIPAddresses i ON i.InterfaceIndex = n.Interfaces.Index AND i.NodeID = n.NodeID';
+        'SELECT n.SysName as hostname, n.Interfaces.Index as interfaceIndex, n.Interfaces.MAC as macAddress, n.Interfaces.Name as interfaceName, n.Interfaces.Caption as interfaceDescription, n.Interfaces.TypeDescription as interfaceType, i.IPAddress as ipAddress, i.SubnetMask as subnetMask FROM Orion.Nodes n LEFT JOIN Orion.NodeIPAddresses i ON i.InterfaceIndex = n.Interfaces.Index AND i.NodeID = n.NodeID WHERE n.Interfaces.Index IS NOT NULL';
       const interfaces = await this.query<NetworkInterface[]>(query);
       // console.log(interfaces)
       return this.filterNetworkInterfaces(interfaces);

@@ -1,6 +1,8 @@
 import {
+  RelationshipClass,
   // RelationshipClass,
   StepEntityMetadata,
+  StepRelationshipMetadata,
   // StepRelationshipMetadata,
 } from '@jupiterone/integration-sdk-core';
 
@@ -22,5 +24,17 @@ export const Entities: Record<
     resourceName: 'Solarwinds Device',
     _type: 'solarwinds_hostagent',
     _class: ['HostAgent'],
+  },
+};
+
+export const Relationships: Record<
+  'HOST_AGENT_MONITORS_NETWORK_INTERFACE',
+  StepRelationshipMetadata
+> = {
+  HOST_AGENT_MONITORS_NETWORK_INTERFACE: {
+    _type: 'solarwinds_hostagent_monitors_network_interface',
+    sourceType: Entities.HOST_AGENT._type,
+    _class: RelationshipClass.MONITORS,
+    targetType: Entities.NETWORK_INTERFACE._type,
   },
 };

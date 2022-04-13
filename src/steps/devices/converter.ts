@@ -7,12 +7,10 @@ import { SolarwindsHostAgent } from '../../solarwinds/types';
 import { Entities } from '../constants';
 import crypto from 'crypto';
 
-export function createHostAgentEntityIdentifier(
-  swa: SolarwindsHostAgent,
-): string {
-  const id = `${swa.hostname}:${crypto
+export function createHostAgentEntityIdentifier(hostname: string): string {
+  const id = `${hostname}:${crypto
     .createHash('md5')
-    .update(swa.hostname)
+    .update(hostname)
     .digest('hex')}`;
   return id;
 }
@@ -24,7 +22,7 @@ export function createHostAgentEntity(swa: SolarwindsHostAgent): Entity {
       source: swa,
       assign: {
         ...convertProperties(swa),
-        _key: createHostAgentEntityIdentifier(swa),
+        _key: createHostAgentEntityIdentifier(swa.hostname),
         _type: Entities.HOST_AGENT._type,
         _class: Entities.HOST_AGENT._class,
         name,

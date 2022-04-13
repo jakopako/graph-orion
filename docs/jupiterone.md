@@ -101,6 +101,14 @@ The following entities are created:
 | Solarwinds Device            | `solarwinds_hostagent`         | `HostAgent`        |
 | Solarwinds Network Interface | `solarwinds_network_interface` | `NetworkInterface` |
 
+### Relationships
+
+The following relationships are created:
+
+| Source Entity `_type`  | Relationship `_class` | Target Entity `_type`          |
+| ---------------------- | --------------------- | ------------------------------ |
+| `solarwinds_hostagent` | **MONITORS**          | `solarwinds_network_interface` |
+
 <!--
 ********************************************************************************
 END OF GENERATED DOCUMENTATION AFTER BELOW MARKER
