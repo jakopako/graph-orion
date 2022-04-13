@@ -15,9 +15,7 @@ export async function fetchDevices({
   const apiClient = createAPIClient(instance.config);
 
   await apiClient.iterateDevices(async (device) => {
-    const hostAgentEntity = await jobState.addEntity(
-      createHostAgentEntity(device),
-    );
+    await jobState.addEntity(createHostAgentEntity(device));
   });
 }
 export const devicesSteps: IntegrationStep<IntegrationConfig>[] = [

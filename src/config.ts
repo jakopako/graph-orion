@@ -54,7 +54,7 @@ export async function validateInvocation(
 
   if (!config.username || !config.password || !config.url) {
     throw new IntegrationValidationError(
-      'Config requires all of {username, password, url}',
+      'Config requires all of {username, password, url, verifyCert}',
     );
   }
 

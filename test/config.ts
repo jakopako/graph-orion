@@ -10,12 +10,17 @@ if (process.env.LOAD_ENV) {
     path: path.join(__dirname, '../.env'),
   });
 }
-const DEFAULT_CLIENT_ID = 'dummy-acme-client-id';
-const DEFAULT_CLIENT_SECRET = 'dummy-acme-client-secret';
+
+const DEFAULT_USERNAME = 'dummy-username';
+const DEFAULT_PASSWORD = 'dummy-password';
+const DEFAULT_URL = 'http://localhost:17777/';
+const DEFAULT_VERIFY_CERT = true;
 
 export const integrationConfig: IntegrationConfig = {
-  clientId: process.env.CLIENT_ID || DEFAULT_CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET || DEFAULT_CLIENT_SECRET,
+  username: process.env.USERNAME || DEFAULT_USERNAME,
+  password: process.env.PASSWORD || DEFAULT_PASSWORD,
+  url: process.env.URL || DEFAULT_URL,
+  verifyCert: process.env.VERIFY_CERT == 'true' || DEFAULT_VERIFY_CERT,
 };
 
 export function buildStepTestConfigForStep(stepId: string): StepTestConfig {
