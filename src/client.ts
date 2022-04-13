@@ -31,7 +31,7 @@ export class APIClient {
     // authentication works with the provided credentials, throw an err if
     // authentication fails
     try {
-      this.client.verifyAuthentication();
+      await this.client.verifyAuthentication();
     } catch (err) {
       throw new IntegrationValidationError(
         `Failed to authenticate with the solarwinds API: ${err.message}`,

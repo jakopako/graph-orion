@@ -107,34 +107,21 @@ export class OrionAPIClient {
   }
 
   public async fetchDevices(): Promise<SolarwindsHostAgent[]> {
-    try {
-      const query =
-        'SELECT n.DNS as dnsName, n.SysName as hostname, n.Vendor as vendor, n.Description as description, n.NodeDescription as nodeDescription FROM Orion.Nodes n';
-      const devices = await this.query<SolarwindsHostAgent[]>(query);
-      return this.filterSolarwindsHostAgents(devices);
-    } catch (err) {
-      throw err;
-    }
+    const query =
+      'SELECT n.DNS as dnsName, n.SysName as hostname, n.Vendor as vendor, n.Description as description, n.NodeDescription as nodeDescription FROM Orion.Nodes n';
+    const devices = await this.query<SolarwindsHostAgent[]>(query);
+    return this.filterSolarwindsHostAgents(devices);
   }
 
   public async fetchNetworkInterfaces(): Promise<NetworkInterface[]> {
-    try {
-      const query =
-        'SELECT n.SysName as hostname, n.Interfaces.Index as interfaceIndex, n.Interfaces.MAC as macAddress, n.Interfaces.Name as interfaceName, n.Interfaces.Caption as interfaceDescription, n.Interfaces.TypeDescription as interfaceType, i.IPAddress as ipAddress, i.SubnetMask as subnetMask FROM Orion.Nodes n LEFT JOIN Orion.NodeIPAddresses i ON i.InterfaceIndex = n.Interfaces.Index AND i.NodeID = n.NodeID WHERE n.Interfaces.Index IS NOT NULL';
-      const interfaces = await this.query<NetworkInterface[]>(query);
-      // console.log(interfaces)
-      return this.filterNetworkInterfaces(interfaces);
-    } catch (err) {
-      throw err;
-    }
+    const query =
+      'SELECT n.SysName as hostname, n.Interfaces.Index as interfaceIndex, n.Interfaces.MAC as macAddress, n.Interfaces.Name as interfaceName, n.Interfaces.Caption as interfaceDescription, n.Interfaces.TypeDescription as interfaceType, i.IPAddress as ipAddress, i.SubnetMask as subnetMask FROM Orion.Nodes n LEFT JOIN Orion.NodeIPAddresses i ON i.InterfaceIndex = n.Interfaces.Index AND i.NodeID = n.NodeID WHERE n.Interfaces.Index IS NOT NULL';
+    const interfaces = await this.query<NetworkInterface[]>(query);
+    return this.filterNetworkInterfaces(interfaces);
   }
 
   public async verifyAuthentication(): Promise<void> {
-    try {
-      const query = 'SELECT IPAddress FROM Orion.Nodes';
-      await this.query(query);
-    } catch (err) {
-      throw err;
-    }
+    const query = 'SELECT IPAddress FROM Orion.Nodes';
+    await this.query(query);
   }
 }
