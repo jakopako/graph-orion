@@ -45,7 +45,11 @@ export class OrionAPIClient {
     const uIDSet: Set<string> = new Set();
     const newList: NetworkInterface[] = [];
     for (const nInterface of nis) {
-      if (nInterface.hostname != '' && nInterface.macAddress != '') {
+      // if (nInterface.hostname != '' && nInterface.macAddress != '') {
+      if (nInterface.hostname != '') {
+        if (nInterface.macAddress == '') {
+          nInterface.macAddress = 'unknown';
+        }
         const uID = nInterface.hostname + nInterface.interfaceName;
         if (!uIDSet.has(uID)) {
           uIDSet.add(uID);
