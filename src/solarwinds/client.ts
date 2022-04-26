@@ -1,6 +1,8 @@
 import { SolarwindsHostAgent, NetworkInterface } from './types';
 import fetch, { RequestInit } from 'node-fetch';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
+import path from 'path';
+import { URL } from 'url';
 
 // work around
 // https://bobbyhadz.com/blog/javascript-error-err-require-esm-of-es-module-node-fetch
@@ -22,7 +24,9 @@ export class OrionAPIClient {
   constructor(options: CreateOrionClientParams) {
     this.username = options.username;
     this.password = options.password;
-    this.url = options.url + 'Solarwinds/InformationService/V3/Json/Query';
+    this.url = new URL(
+      path.join(options.url, '/Solarwinds/InformationService/V3/Json/Query'),
+    ).toString();
     if (!options.verifyCert) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     }
