@@ -44,7 +44,7 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   username: string;
   password: string;
   url: string;
-  verifyCert: boolean;
+  verifyCert?: boolean;
 }
 
 export async function validateInvocation(
@@ -54,8 +54,12 @@ export async function validateInvocation(
 
   if (!config.username || !config.password || !config.url) {
     throw new IntegrationValidationError(
-      'Config requires all of {username, password, url, verifyCert}',
+      'Config requires all of {username, password, url}',
     );
+  }
+
+  if (!config.verifyCert) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 
   const apiClient = createAPIClient(config);

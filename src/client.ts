@@ -20,7 +20,6 @@ export class APIClient {
       username: this.config.username,
       password: this.config.password,
       url: this.config.url,
-      verifyCert: this.config.verifyCert,
     });
   }
 

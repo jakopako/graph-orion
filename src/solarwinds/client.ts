@@ -4,16 +4,10 @@ import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import path from 'path';
 import { URL } from 'url';
 
-// work around
-// https://bobbyhadz.com/blog/javascript-error-err-require-esm-of-es-module-node-fetch
-// const fetch = (url: RequestInfo, init?: RequestInit) =>
-//   import('node-fetch').then(({ default: fetch }) => fetch(url, init));
-
 interface CreateOrionClientParams {
   username: string;
   password: string;
   url: string;
-  verifyCert: boolean;
 }
 
 export class OrionAPIClient {
@@ -27,9 +21,6 @@ export class OrionAPIClient {
     this.url = new URL(
       path.join(options.url, '/Solarwinds/InformationService/V3/Json/Query'),
     ).toString();
-    if (!options.verifyCert) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    }
   }
 
   private filterNetworkInterfaces(nis: NetworkInterface[]): NetworkInterface[] {
