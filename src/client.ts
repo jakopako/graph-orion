@@ -2,7 +2,11 @@ import { IntegrationValidationError } from '@jupiterone/integration-sdk-core';
 import { OrionAPIClient } from './solarwinds/client';
 
 import { IntegrationConfig } from './config';
-import { SolarwindsHostAgent, NetworkInterface } from './solarwinds/types';
+import {
+  SolarwindsHostAgent,
+  NetworkInterface,
+  IpAddress,
+} from './solarwinds/types';
 
 export type ResourceIteratee<T> = (each: T) => Promise<void> | void;
 
@@ -43,12 +47,12 @@ export class APIClient {
    *
    * @param iteratee receives each resource to produce entities/relationships
    */
-  public async iterateDevices(
+  public async iterateHostAgents(
     iteratee: ResourceIteratee<SolarwindsHostAgent>,
   ): Promise<void> {
-    const devices = await this.client.fetchDevices();
-    for (const device of devices) {
-      await iteratee(device);
+    const hostAgents = await this.client.fetchHostAgents();
+    for (const hostAgent of hostAgents) {
+      await iteratee(hostAgent);
     }
   }
 
@@ -61,9 +65,17 @@ export class APIClient {
     iteratee: ResourceIteratee<NetworkInterface>,
   ): Promise<void> {
     const interfaces = await this.client.fetchNetworkInterfaces();
-    // console.log(interfaces)
     for (const nInterface of interfaces) {
       await iteratee(nInterface);
+    }
+  }
+
+  public async iterateIpAddresses(
+    iteratee: ResourceIteratee<IpAddress>,
+  ): Promise<void> {
+    const ipAddresses = await this.client.fetchIpAddresses();
+    for (const nIpAddress of ipAddresses) {
+      await iteratee(nIpAddress);
     }
   }
 }

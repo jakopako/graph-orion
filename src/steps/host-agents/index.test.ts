@@ -15,7 +15,7 @@ test('fetch-account', async () => {
     name: 'fetch-account',
   });
 
-  const stepConfig = buildStepTestConfigForStep(Steps.DEVICES);
+  const stepConfig = buildStepTestConfigForStep(Steps.HOST_AGENTS);
   const stepResult = await executeStepWithDependencies(stepConfig);
   expect(stepResult).toMatchStepMetadata(stepConfig);
 });

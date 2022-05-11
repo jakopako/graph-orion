@@ -1,6 +1,11 @@
 import { networkInterfacesSteps } from './network-interfaces';
-import { devicesSteps } from './devices';
+import { hostAgentSteps } from './host-agents';
+import { ipAddressesSteps } from './ip-addresses';
 
-const integrationSteps = [...devicesSteps, ...networkInterfacesSteps];
+const integrationSteps = [
+  ...hostAgentSteps,
+  ...networkInterfacesSteps,
+  ...ipAddressesSteps,
+];
 
 export { integrationSteps };

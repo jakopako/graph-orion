@@ -8,7 +8,7 @@ import { Entities } from '../constants';
 import crypto from 'crypto';
 
 export function createHostAgentEntityIdentifier(hostname: string): string {
-  const id = `${hostname}:${crypto
+  const id = `device:${hostname}:${crypto
     .createHash('md5')
     .update(hostname)
     .digest('hex')}`;

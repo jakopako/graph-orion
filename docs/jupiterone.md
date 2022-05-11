@@ -98,16 +98,19 @@ The following entities are created:
 
 | Resources                    | Entity `_type`                 | Entity `_class`    |
 | ---------------------------- | ------------------------------ | ------------------ |
-| Solarwinds Device            | `solarwinds_hostagent`         | `HostAgent`        |
+| Solarwinds Host Agent        | `solarwinds_hostagent`         | `HostAgent`        |
+| Solarwinds Ip Address        | `solarwinds_ip_address`        | `IpAddress`        |
 | Solarwinds Network Interface | `solarwinds_network_interface` | `NetworkInterface` |
 
 ### Relationships
 
 The following relationships are created:
 
-| Source Entity `_type`  | Relationship `_class` | Target Entity `_type`          |
-| ---------------------- | --------------------- | ------------------------------ |
-| `solarwinds_hostagent` | **MONITORS**          | `solarwinds_network_interface` |
+| Source Entity `_type`          | Relationship `_class` | Target Entity `_type`          |
+| ------------------------------ | --------------------- | ------------------------------ |
+| `solarwinds_hostagent`         | **MONITORS**          | `solarwinds_ip_address`        |
+| `solarwinds_hostagent`         | **MONITORS**          | `solarwinds_network_interface` |
+| `solarwinds_network_interface` | **HAS**               | `solarwinds_ip_address`        |
 
 <!--
 ********************************************************************************

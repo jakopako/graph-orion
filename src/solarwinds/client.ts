@@ -1,4 +1,9 @@
-import { SolarwindsHostAgent, NetworkInterface } from './types';
+import {
+  SolarwindsHostAgent,
+  NetworkInterface,
+  IpAddress,
+  OrionIpAddress,
+} from './types';
 import fetch, { RequestInit } from 'node-fetch';
 import { IntegrationProviderAPIError } from '@jupiterone/integration-sdk-core';
 import path from 'path';
@@ -40,7 +45,6 @@ export class OrionAPIClient {
     const uIDSet: Set<string> = new Set();
     const newList: NetworkInterface[] = [];
     for (const nInterface of nis) {
-      // if (nInterface.hostname != '' && nInterface.macAddress != '') {
       if (nInterface.hostname != '') {
         if (nInterface.macAddress == '') {
           nInterface.macAddress = 'unknown';
@@ -71,8 +75,31 @@ export class OrionAPIClient {
     return newList;
   }
 
+  private filterOrionIpAddresses(oia: OrionIpAddress[]): IpAddress[] {
+    const newList: IpAddress[] = [];
+    for (const oip of oia) {
+      if (oip.hostname != '' && oip.subnetMask != '') {
+        var ipVersion: number = 4;
+        if (oip.ipAddressType == 'IPv6') {
+          ipVersion = 6;
+        }
+        const ipAddress: IpAddress = {
+          ipAddress: oip.ipAddress,
+          subnetMask: oip.subnetMask,
+          ipVersion: ipVersion,
+          hostname: oip.hostname,
+        };
+        newList.push(ipAddress);
+      }
+    }
+    return newList;
+  }
+
   private async query<
-    OrionResponse extends SolarwindsHostAgent[] | NetworkInterface[],
+    OrionResponse extends
+      | SolarwindsHostAgent[]
+      | NetworkInterface[]
+      | OrionIpAddress[],
   >(query: string): Promise<OrionResponse> {
     const postBody: any = {
       query: query,
@@ -105,11 +132,11 @@ export class OrionAPIClient {
     }
   }
 
-  public async fetchDevices(): Promise<SolarwindsHostAgent[]> {
+  public async fetchHostAgents(): Promise<SolarwindsHostAgent[]> {
     const query =
       'SELECT n.DNS as dnsName, n.SysName as hostname, n.Vendor as vendor, n.Description as description, n.NodeDescription as nodeDescription FROM Orion.Nodes n';
-    const devices = await this.query<SolarwindsHostAgent[]>(query);
-    return this.filterSolarwindsHostAgents(devices);
+    const hostAgents = await this.query<SolarwindsHostAgent[]>(query);
+    return this.filterSolarwindsHostAgents(hostAgents);
   }
 
   public async fetchNetworkInterfaces(): Promise<NetworkInterface[]> {
@@ -117,6 +144,13 @@ export class OrionAPIClient {
       'SELECT n.SysName as hostname, n.Interfaces.Index as interfaceIndex, n.Interfaces.MAC as macAddress, n.Interfaces.Name as interfaceName, n.Interfaces.Caption as interfaceDescription, n.Interfaces.TypeDescription as interfaceType, i.IPAddress as ipAddress, i.SubnetMask as subnetMask FROM Orion.Nodes n LEFT JOIN Orion.NodeIPAddresses i ON i.InterfaceIndex = n.Interfaces.Index AND i.NodeID = n.NodeID WHERE n.Interfaces.Index IS NOT NULL';
     const interfaces = await this.query<NetworkInterface[]>(query);
     return this.filterNetworkInterfaces(interfaces);
+  }
+
+  public async fetchIpAddresses(): Promise<IpAddress[]> {
+    const query =
+      "SELECT n.SysName as hostname, i.IPAddress as ipAddress, i.SubnetMask as subnetMask, i.IPAddressType as ipAddressType FROM Orion.Nodes n LEFT JOIN Orion.NodeIPAddresses i ON i.NodeID = n.NodeID WHERE ipAddressType = 'IPv4'";
+    const ipAddresses = await this.query<OrionIpAddress[]>(query);
+    return this.filterOrionIpAddresses(ipAddresses);
   }
 
   public async verifyAuthentication(): Promise<void> {

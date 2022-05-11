@@ -8,23 +8,23 @@ import { IntegrationConfig } from '../../config';
 import { Steps, Entities } from '../constants';
 import { createHostAgentEntity } from './converter';
 
-export async function fetchDevices({
+export async function fetchHostAgents({
   instance,
   jobState,
 }: IntegrationStepExecutionContext<IntegrationConfig>) {
   const apiClient = createAPIClient(instance.config);
 
-  await apiClient.iterateDevices(async (device) => {
+  await apiClient.iterateHostAgents(async (device) => {
     await jobState.addEntity(createHostAgentEntity(device));
   });
 }
-export const devicesSteps: IntegrationStep<IntegrationConfig>[] = [
+export const hostAgentSteps: IntegrationStep<IntegrationConfig>[] = [
   {
-    id: Steps.DEVICES,
-    name: 'Fetch Devices',
+    id: Steps.HOST_AGENTS,
+    name: 'Fetch Host Agents',
     entities: [Entities.HOST_AGENT],
     relationships: [],
     dependsOn: [],
-    executionHandler: fetchDevices,
+    executionHandler: fetchHostAgents,
   },
 ];

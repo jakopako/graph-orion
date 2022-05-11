@@ -8,7 +8,7 @@ import { createAPIClient } from '../../client';
 
 import { IntegrationConfig } from '../../config';
 import { Steps, Entities, Relationships } from '../constants';
-import { createHostAgentEntityIdentifier } from '../devices/converter';
+import { createHostAgentEntityIdentifier } from '../host-agents/converter';
 import { createNetworkInterfaceEntity } from './converter';
 
 export async function fetchNetworkInterfaces({
@@ -43,7 +43,7 @@ export const networkInterfacesSteps: IntegrationStep<IntegrationConfig>[] = [
     name: 'Fetch Network Interfaces',
     entities: [Entities.NETWORK_INTERFACE],
     relationships: [Relationships.HOST_AGENT_MONITORS_NETWORK_INTERFACE],
-    dependsOn: [Steps.DEVICES],
+    dependsOn: [Steps.HOST_AGENTS],
     executionHandler: fetchNetworkInterfaces,
   },
 ];
