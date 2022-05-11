@@ -75,18 +75,25 @@ export class OrionAPIClient {
     return newList;
   }
 
+  private getIPVersionFromString(ipVersion: string): number {
+    switch (ipVersion) {
+      case 'IPv4':
+        return 4;
+      case 'IPv6':
+        return 6;
+      default:
+        return 4;
+    }
+  }
+
   private filterOrionIpAddresses(oia: OrionIpAddress[]): IpAddress[] {
     const newList: IpAddress[] = [];
     for (const oip of oia) {
       if (oip.hostname != '' && oip.subnetMask != '') {
-        var ipVersion: number = 4;
-        if (oip.ipAddressType == 'IPv6') {
-          ipVersion = 6;
-        }
         const ipAddress: IpAddress = {
           ipAddress: oip.ipAddress,
           subnetMask: oip.subnetMask,
-          ipVersion: ipVersion,
+          ipVersion: this.getIPVersionFromString(oip.ipAddressType),
           hostname: oip.hostname,
         };
         newList.push(ipAddress);

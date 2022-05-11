@@ -7,8 +7,7 @@ import { IpAddress } from '../../solarwinds/types';
 import { Entities } from '../constants';
 
 export function createIpAddressEntityIdentifier(ip: IpAddress): string {
-  const id = `ipaddress:${ip.hostname}:${ip.ipAddress}`;
-  return id;
+  return `ipaddress:${ip.hostname}:${ip.ipAddress}`;
 }
 
 export function createIpAddressEntity(ip: IpAddress): Entity {

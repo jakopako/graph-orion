@@ -19,13 +19,11 @@ export function createNetworkInterfaceEntityIdentifier(
   // the link between IpAddresses and NetworkInterfaces
   // (= NETWORK_INTERFACE_HAS_IP_ADDRESS) we need to be able to find
   // network interface IDs by hostname and ip address only.
-  var id: string;
   if (ipAddress == undefined) {
-    id = `network-interface:${hostname}:${interfaceIndex}`;
+    return `network-interface:${hostname}:${interfaceIndex}`;
   } else {
-    id = `network-interface:${hostname}:${ipAddress}`;
+    return `network-interface:${hostname}:${ipAddress}`;
   }
-  return id;
 }
 
 export function createNetworkInterfaceEntity(
