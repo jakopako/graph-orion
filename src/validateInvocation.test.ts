@@ -21,7 +21,7 @@ describe('#validateInvocation', () => {
     });
 
     await expect(validateInvocation(executionContext)).rejects.toThrow(
-      'Config requires all of {username, password, url, verifyCert}',
+      'Config requires all of {username, password, url}',
     );
   });
 
@@ -54,10 +54,10 @@ describe('#validateInvocation', () => {
      * error messaging is expected and clear to end-users
      */
     describe('invalid user credentials', () => {
-      test.skip('should throw if clientId is invalid', async () => {
+      test.skip('should throw if username or password is invalid', async () => {
         recording = setupProjectRecording({
           directory: __dirname,
-          name: 'client-id-auth-error',
+          name: 'cred-auth-error',
           // Many authorization failures will return non-200 responses
           // and `recordFailedRequest: true` is needed to capture these responses
           options: {

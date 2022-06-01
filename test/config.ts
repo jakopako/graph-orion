@@ -14,13 +14,13 @@ if (process.env.LOAD_ENV) {
 const DEFAULT_USERNAME = 'dummy-username';
 const DEFAULT_PASSWORD = 'dummy-password';
 const DEFAULT_URL = 'http://localhost:17777/';
-const DEFAULT_VERIFY_CERT = true;
+// const DEFAULT_VERIFY_CERT = true;
 
 export const integrationConfig: IntegrationConfig = {
   username: process.env.USERNAME || DEFAULT_USERNAME,
   password: process.env.PASSWORD || DEFAULT_PASSWORD,
   url: process.env.URL || DEFAULT_URL,
-  verifyCert: process.env.VERIFY_CERT == 'true' || DEFAULT_VERIFY_CERT,
+  verifyCert: process.env.VERIFY_CERT == 'true',
 };
 
 export function buildStepTestConfigForStep(stepId: string): StepTestConfig {
