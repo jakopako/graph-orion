@@ -38,7 +38,6 @@
     "@jupiterone/integration-sdk-testing": "^8.8.0"
   },
   "dependencies": {
-    "@jupiterone/integration-sdk-cli": "^8.11.0",
     "node-fetch": "2.6.7"
   }
 }
