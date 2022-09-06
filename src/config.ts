@@ -31,7 +31,7 @@ export const instanceConfigFields: IntegrationInstanceConfigFieldMap = {
   url: {
     type: 'string',
   },
-  verifyCert: {
+  disableTlsVerification: {
     type: 'boolean',
   },
 };
@@ -44,7 +44,7 @@ export interface IntegrationConfig extends IntegrationInstanceConfig {
   username: string;
   password: string;
   url: string;
-  verifyCert?: boolean;
+  disableTlsVerification?: boolean;
 }
 
 export async function validateInvocation(
@@ -58,7 +58,7 @@ export async function validateInvocation(
     );
   }
 
-  if (!config.verifyCert) {
+  if (config.disableTlsVerification) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   }
 

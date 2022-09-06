@@ -70,7 +70,7 @@ describe('#validateInvocation', () => {
             username: 'bli',
             password: 'bla',
             url: integrationConfig.url,
-            verifyCert: integrationConfig.verifyCert,
+            disableTlsVerification: integrationConfig.disableTlsVerification,
           },
         });
 
